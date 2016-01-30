@@ -1,0 +1,5 @@
+#!/usr/bin/python2
+
+from blaunch.main import MainFrame
+
+MainFrame.RunLauncher()

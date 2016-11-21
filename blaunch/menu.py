@@ -15,7 +15,7 @@ class Node:
     def __init__(self):
         self.children = []
 
-    def Path(self):
+    def path(self):
         """Return the full path to this Node
 
         Recursively prepends ancestors' shortcuts to this Node's shortcut.
@@ -26,9 +26,9 @@ class Node:
         if self.parent is None: # This must be the root node. Start the chain.
             return '';
 
-        return self.parent.Path() + self.shortcut
+        return self.parent.path() + self.shortcut
 
-    def Resolve(self, path):
+    def resolve(self, path):
         """Return a descendant Node
 
         Recursively searches children looking for a complete match to [path].
@@ -50,11 +50,11 @@ class Node:
 
                 # We found a match but not against the entire path. Take the
                 # remaining part of the path and continue recursion on it.
-                return child.Resolve(path[match_len:])
+                return child.resolve(path[match_len:])
 
         raise LookupError(path + ' could not be resolved.')
 
-    def Match(self, path):
+    def match(self, path):
         """Return all possible matches for [path].
 
         Given a hierarchy like: [root] -> [level1] -> [level2] -> [level3]..
@@ -81,7 +81,7 @@ class Node:
 
             # Partial match. Continue recursion.
             if path.startswith(child.shortcut):
-                return child.Match(path[len(child.shortcut):])
+                return child.match(path[len(child.shortcut):])
 
         # Can't go any deeper. Check for partial matches on this level.
         partial_matches = []
@@ -93,18 +93,18 @@ class Node:
         return partial_matches
 
     @staticmethod
-    def Load(file_contents):
+    def load(file_contents):
         """Return a root node with loaded hierarchy from a config file
         """
 
-        dictionaries = Node._Parse(file_contents)
-        nodes = Node._Generate_Nodes(dictionaries)
-        root = Node._Link(nodes)
+        dictionaries = Node._parse(file_contents)
+        nodes = Node._generate_nodes(dictionaries)
+        root = Node._link(nodes)
 
         return root
 
     @staticmethod
-    def _Parse(file_contents):
+    def _parse(file_contents):
         """Return a list of dictionaries extracted from [file_contents].
 
         Given a [file_contents] of:
@@ -153,7 +153,7 @@ class Node:
         return dictionaries
 
     @staticmethod
-    def _Generate_Nodes(dictionaries):
+    def _generate_nodes(dictionaries):
         """Return a list of Nodes from the provided list of dictionaries.
 
         Each dictionary in [dictionaries] represents a Node. Key/value pairs in
@@ -188,7 +188,7 @@ class Node:
 
 
     @staticmethod
-    def _Link(nodes):
+    def _link(nodes):
         """Return a root node with a linked hierarchy.
 
         Given a list of Node instances, this performs linking based on values
@@ -204,7 +204,7 @@ class Node:
             if node.parent is None:
                 node.parent = root
             else:
-                node.parent = root.Resolve(node.parent)
+                node.parent = root.resolve(node.parent)
                 if node.parent is None:
                     print 'error 12345: ' + node.shortcut
                     return None

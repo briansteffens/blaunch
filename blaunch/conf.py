@@ -8,7 +8,7 @@ class Config:
     shell_prefix = U'$'
 
     def __init__(self, file_contents):
-        dictionaries = Config._Parse(file_contents)
+        dictionaries = Config._parse(file_contents)
 
         for key in dictionaries:
             key = key.lower()
@@ -34,7 +34,7 @@ class Config:
                 self.shell_prefix = value
 
     @staticmethod
-    def _Parse(file_contents):
+    def _parse(file_contents):
         """Parses file_contents into a dictionary
 
         Empty lines and commented (#) lines are ignored.

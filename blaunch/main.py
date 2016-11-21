@@ -40,7 +40,7 @@ class MainFrame(wx.Frame):
         self.input_text.SetFocus()
 
         self.scroll = scrolled.ScrolledPanel(self.panel, -1)
-        self.scroll.Bind(wx.EVT_SIZE, self.OnScrollSize)
+        self.scroll.Bind(wx.EVT_SIZE, self.on_scroll_size)
         self.scroll_vbox = wx.BoxSizer(wx.VERTICAL)
 
         self.scroll.SetSizer(self.scroll_vbox)
@@ -51,7 +51,7 @@ class MainFrame(wx.Frame):
         self.panel.SetSizer(panel_vbox)
         self.panel.SetAutoLayout(1)
 
-    def IsShellCommand(self):
+    def is_shell_command(self):
         return self.input_text.GetValue().startswith(self.config.shell_prefix)
 
     def OnKeyPress(self, event):
@@ -60,21 +60,21 @@ class MainFrame(wx.Frame):
 
         enter = event.GetKeyCode() == 13
 
-        if self.IsShellCommand() and enter:
-            self.ProcessShellCommand(self.input_text.GetValue())
+        if self.is_shell_command() and enter:
+            self.process_shell_command(self.input_text.GetValue())
             return
 
-        self.UpdateOutput()
+        self.update_output()
 
         if len(self.nodes) == 1 and \
-                self.nodes[0].Path() == self.input_text.GetValue():
+                self.nodes[0].path() == self.input_text.GetValue():
             if self.config.auto_run or enter:
-                self.Process(self.nodes[0])
+                self.process(self.nodes[0])
                 return
 
         event.Skip()
 
-    def Process(self, node):
+    def process(self, node):
         if node.command is None:
             return
 
@@ -83,35 +83,35 @@ class MainFrame(wx.Frame):
 
         self.Close()
 
-    def ProcessShellCommand(self, command):
+    def process_shell_command(self, command):
         command = command.replace(self.config.shell_prefix, "").strip()
 
         subprocess.Popen(command, shell=True)
 
         self.Close()
 
-    def OnScrollSize(self, event):
+    def on_scroll_size(self, event):
         self.output_width_characters = int(math.floor(self.GetClientSize()[0] /
             self.GetTextExtent(' ')[0])) - 3
-        self.UpdateOutput()
+        self.update_output()
 
-    def UpdateOutput(self):
+    def update_output(self):
         for item in self.output_items:
             self.scroll.RemoveChild(item)
             item.Destroy()
         self.output_items = []
 
         # If the command matches the shell prefix. Ex: "$ hydrogen"
-        if self.IsShellCommand():
+        if self.is_shell_command():
             item = wx.StaticText(self.scroll, -1, "Enter a shell command..")
             self.scroll_vbox.Add(item, 0, wx.ALIGN_CENTER|wx.LEFT|wx.RIGHT,
                     self.config.padding)
             self.output_items.append(item)
         # Otherwise it's a normal shortcut from menu.conf
         else:
-            self.nodes = self.root.Match(self.input_text.GetValue())
+            self.nodes = self.root.match(self.input_text.GetValue())
             for node in self.nodes:
-                label = self.OverlayStrings(node.shortcut, node.description,
+                label = self.overlay_strings(node.shortcut, node.description,
                         self.output_width_characters)
                 item = wx.StaticText(self.scroll, -1, label)
                 self.scroll_vbox.Add(item, 0, wx.ALIGN_LEFT|wx.LEFT|wx.RIGHT,
@@ -120,7 +120,7 @@ class MainFrame(wx.Frame):
 
         self.scroll.Layout()
 
-    def OverlayStrings(self, left, right, length):
+    def overlay_strings(self, left, right, length):
         if left is None: left = ''
         if right is None: right = ''
 
@@ -141,14 +141,14 @@ class MainFrame(wx.Frame):
         return result
 
     @staticmethod
-    def RunLauncher():
+    def run_launcher():
         app = wx.PySimpleApp()
 
         config_contents = open('/etc/blaunch/blaunch.conf', 'r').read()
         config = Config(config_contents)
 
         menu_contents = open('/etc/blaunch/menu.conf', 'r').read()
-        root_node = Node.Load(menu_contents)
+        root_node = Node.load(menu_contents)
 
         frame = MainFrame(parent = None, root_node = root_node,
                 config = config, id = -1)
@@ -157,4 +157,4 @@ class MainFrame(wx.Frame):
 
 
 if __name__ == '__main__':
-    MainFrame.RunLauncher()
+    MainFrame.run_launcher()

@@ -2,4 +2,4 @@
 
 from blaunch.main import MainFrame
 
-MainFrame.RunLauncher()
+MainFrame.run_launcher()

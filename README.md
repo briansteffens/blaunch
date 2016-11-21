@@ -6,6 +6,8 @@ just associates character strings with shell commands. These shortcuts can be
 set up in nested categories, and a minimal GUI shows the available options as
 you type.
 
+![Screenshot](https://s3.amazonaws.com/briansteffens/blaunch.png)
+
 # Installation
 
 ```

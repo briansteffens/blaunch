@@ -61,3 +61,32 @@ The available options are as follows:
 - **size_h** - The default height of the launcher window.
 - **shell_prefix** - The key (or keys) used to run an ad-hoc shell command
                      instead of selecting a menu item.
+
+## /etc/blaunch/menu.conf
+
+This file sets the menu options available in the launcher. The launcher can
+contain two kinds of entries:
+
+- **Commands** launch some program or shell command.
+- **Groups** organize commands and/or other groups.
+
+Here's an example *menu.conf* file. This defines one group called "Web
+Browsers" which contains two commands which launch either firefox or chrome:
+
+```
+shortcut=w
+description=Web Browsers
+
+shortcut=f
+parent=w
+description=Mozilla Firefox
+command=firefox
+
+shortcut=c
+parent=w
+description=Google Chromium
+command=chromium
+```
+
+With the above configuration, typing "wf" into the launcher would launch
+Firefox and typing "wc" into the launcher would launch Chrome.

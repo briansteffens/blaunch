@@ -84,7 +84,7 @@ class MainFrame(wx.Frame):
         self.Close()
 
     def process_shell_command(self, command):
-        command = command.replace(self.config.shell_prefix, "").strip()
+        command = command[len(self.config.shell_prefix):].strip()
 
         subprocess.Popen(command, shell=True)
 
